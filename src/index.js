@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './App.css';
-
+import {Row} from './row.js'
 
 class App extends React.Component {
   constructor(props) {
@@ -58,7 +58,7 @@ class App extends React.Component {
   }
 
   
-  
+
   move(direction) {
     if (!this.state.gameOver) {
       if (direction === 'up') {                         //UP
@@ -316,30 +316,6 @@ class App extends React.Component {
   }
 };
 
-const Row = ({ row }) => {
-  return (
-    <tbody>
-    <tr>
-      {row.map((cell, i) => (<Cell key={i} cellValue={cell} />))}
-    </tr>
-    </tbody>
-  );
-};
-
-const Cell = ({ cellValue }) => {
-  let color = 'cell';
-  let value = (cellValue === 0) ? '' : cellValue;
-  if (value) {
-    color += ` color-${value}`;
-  }
-
-  return (
-    <td>
-      <div className={color}>
-        <div className="number">{value}</div>
-      </div>
-    </td>
-  );
-};
+<Row />
 
 ReactDOM.render(<App />, document.getElementById('root'));
