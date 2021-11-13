@@ -3,8 +3,18 @@ body {
   background-color: #bea26c;
 }
 
+.points {
+  display: flex;
+  justify-content: center;
+}
+.points div {
+  font-size: 30px;
+  color: white;
+}
 p {
   text-align: center;
+  font-size: 30px;
+  color: white;
 }
 
 table {

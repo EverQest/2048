@@ -15,6 +15,10 @@ const Cell = ({ cellValue }) => {
     color += ` color-${value}`;
   }
 
+
+
+
+
   return (
     <td>
       <div className={color}>

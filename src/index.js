@@ -10,7 +10,8 @@ class App extends React.Component {
     this.state = {
       board: null,
       message: null,
-      gameOver: false
+      gameOver: false,
+      points: 0
     };
   }
   
@@ -28,9 +29,9 @@ class App extends React.Component {
   getBlankCoord(board) {
     const blankCoordinates = [];
     
-    for (let r = 0; r < board.length; r++) {
-      for (let c = 0; c < board[r].length; c++) {
-        if (board[r][c] === 0) {blankCoordinates.push([r, c])}
+    for (let i = 0; i < board.length; i++) {
+      for (let j = 0; j < board[i].length; j++) {
+        if (board[i][j] === 0) {blankCoordinates.push([i, j])}
       }
     }
             
@@ -63,13 +64,14 @@ class App extends React.Component {
     if (!this.state.gameOver) {
       if (direction === 'up') {                         //UP
         const movedUp = this.moveUp(this.state.board);
+        
         if (this.boardMoved(this.state.board, movedUp.board)) {
           const upWithRandom = this.randomplace(movedUp.board);
           
           if (this.checkForGameOver(upWithRandom)) {
             this.setState({board: upWithRandom, gameOver: true, message: 'Игра окончена'});
-          } else {
-            this.setState({board: upWithRandom});  
+          }else {
+            this.setState({board: upWithRandom, points: this.state.points += movedUp.points});  
           }
         }
       } else if (direction === 'right') {               //RIGHT
@@ -80,7 +82,7 @@ class App extends React.Component {
           if (this.checkForGameOver(rightWithRandom)) {
             this.setState({board: rightWithRandom, gameOver: true, message: 'Игра окончена'});
           } else {
-            this.setState({board: rightWithRandom});  
+            this.setState({board: rightWithRandom, points: this.state.points += movedRight.points});  
           }
         }
       } else if (direction === 'down') {                //DOWN
@@ -91,7 +93,7 @@ class App extends React.Component {
           if (this.checkForGameOver(downWithRandom)) {
             this.setState({board: downWithRandom, gameOver: true, message: 'Игра окончена'});
           } else {
-            this.setState({board: downWithRandom});
+            this.setState({board: downWithRandom, points: this.state.points += movedDown.points});
           }
         }
       } else if (direction === 'left') {                //LEFT
@@ -102,7 +104,7 @@ class App extends React.Component {
           if (this.checkForGameOver(leftWithRandom)) {
             this.setState({board: leftWithRandom, gameOver: true, message: 'Игра окончена'});  
           } else {
-            this.setState({board: leftWithRandom});
+            this.setState({board: leftWithRandom, points: this.state.points += movedLeft.points});
           }
         }
       }
@@ -112,90 +114,90 @@ class App extends React.Component {
   moveUp(inputBoard) {
     let rotatedRight = this.rotateRight(inputBoard);
     let board = [];
-
-    for (let r = 0; r < rotatedRight.length; r++) {
+    let points = 0;
+    for (let i = 0; i < rotatedRight.length; i++) {
       let row = [];
-      for (let c = 0; c < rotatedRight[r].length; c++) {
-        let current = rotatedRight[r][c];
+      for (let j = 0; j < rotatedRight[i].length; j++) {
+        let current = rotatedRight[i][j];
         (current === 0) ? row.unshift(current) : row.push(current);
       }
       board.push(row);
     }
 
 
-    for (let r = 0; r < board.length; r++) {
-      for (let c = board[r].length - 1; c >= 0; c--) {
-        if (board[r][c] > 0 && board[r][c] === board[r][c - 1]) {
-          board[r][c] = board[r][c] * 2;
-          board[r][c - 1] = 0;
-         
-        } else if (board[r][c] === 0 && board[r][c - 1] > 0) {
-          board[r][c] = board[r][c - 1];
-          board[r][c - 1] = 0;
+    for (let i = 0; i < board.length; i++) {
+      for (let j = board[i].length - 1; j >= 0; j--) {
+        if (board[i][j] > 0 && board[i][j] === board[i][j - 1]) {
+          board[i][j] = board[i][j] * 2;
+          board[i][j - 1] = 0;
+          points += board[i][j];
+        } else if (board[i][j] === 0 && board[i][j - 1] > 0) {
+          board[i][j] = board[i][j - 1];
+          board[i][j - 1] = 0;
         }
       }
     }
 
     board = this.rotateLeft(board);
-
-    return {board};
+    
+    return {board, points};
   }
   
   moveRight(inputBoard) {
     let board = [];
+    let points = 0;
 
 
-
-    for (let r = 0; r < inputBoard.length; r++) {
+    for (let i = 0; i < inputBoard.length; i++) {
       let row = [];      
-      for (let c = 0; c < inputBoard[r].length; c++) {
-        let current = inputBoard[r][c];
+      for (let j = 0; j < inputBoard[i].length; j++) {
+        let current = inputBoard[i][j];
         (current === 0) ? row.unshift(current) : row.push(current);
       }
       board.push(row);
     }
 
-    for (let r = 0; r < board.length; r++) {
-      for (let c = board[r].length - 1; c >= 0; c--) {
-        if (board[r][c] > 0 && board[r][c] === board[r][c - 1]) {
-          board[r][c] = board[r][c] * 2;
-          board[r][c - 1] = 0;
-        
-        } else if (board[r][c] === 0 && board[r][c - 1] > 0) {
-          board[r][c] = board[r][c - 1];
-          board[r][c - 1] = 0;
+    for (let i = 0; i < board.length; i++) {
+      for (let j = board[i].length - 1; j >= 0; j--) {
+        if (board[i][j] > 0 && board[i][j] === board[i][j - 1]) {
+          board[i][j] = board[i][j] * 2;
+          board[i][j - 1] = 0;
+          points += board[i][j];
+        } else if (board[i][j] === 0 && board[i][j - 1] > 0) {
+          board[i][j] = board[i][j - 1];
+          board[i][j - 1] = 0;
         }
       }
     }
 
-    return {board};
+    return {board, points};
   }
   
   moveDown(inputBoard) {
     let rotatedRight = this.rotateRight(inputBoard);
     let board = [];
-   
+    let points = 0;
 
 
-    for (let r = 0; r < rotatedRight.length; r++) {
+    for (let i = 0; i < rotatedRight.length; i++) {
       let row = [];      
-      for (let c = rotatedRight[r].length - 1; c >= 0; c--) {
-        let current = rotatedRight[r][c];
+      for (let j = rotatedRight[i].length - 1; j >= 0; j--) {
+        let current = rotatedRight[i][j];
         (current === 0) ? row.push(current) : row.unshift(current);
       }
       board.push(row);
     }
 
 
-    for (let r = 0; r < board.length; r++) {
-      for (let c = 0; c < board.length; c++) {
-        if (board[r][c] > 0 && board[r][c] === board[r][c + 1]) {
-          board[r][c] = board[r][c] * 2;
-          board[r][c + 1] = 0;
-      
-        } else if (board[r][c] === 0 && board[r][c + 1] > 0) {
-          board[r][c] = board[r][c + 1];
-          board[r][c + 1] = 0;
+    for (let i = 0; i < board.length; i++) {
+      for (let j = 0; j < board.length; j++) {
+        if (board[i][j] > 0 && board[i][j] === board[i][j + 1]) {
+          board[i][j] = board[i][j] * 2;
+          board[i][j + 1] = 0;
+          points += board[i][j];
+        } else if (board[i][j] === 0 && board[i][j + 1] > 0) {
+          board[i][j] = board[i][j + 1];
+          board[i][j + 1] = 0;
         }
       }
     }
@@ -203,47 +205,47 @@ class App extends React.Component {
 
     board = this.rotateLeft(board);
 
-    return {board};
+    return {board, points};
   }
   
   moveLeft(inputBoard) {
     let board = [];
-   
+    let points = 0;
 
 
-    for (let r = 0; r < inputBoard.length; r++) {
+    for (let i = 0; i < inputBoard.length; i++) {
       let row = [];      
-      for (let c = inputBoard[r].length - 1; c >= 0; c--) {
-        let current = inputBoard[r][c];
+      for (let j = inputBoard[i].length - 1; j >= 0; j--) {
+        let current = inputBoard[i][j];
         (current === 0) ? row.push(current) : row.unshift(current);
       }
       board.push(row);
     }
 
 
-    for (let r = 0; r < board.length; r++) {
-      for (let c = 0; c < board.length; c++) {
-        if (board[r][c] > 0 && board[r][c] === board[r][c + 1]) {
-          board[r][c] = board[r][c] * 2;
-          board[r][c + 1] = 0;
-        
-        } else if (board[r][c] === 0 && board[r][c + 1] > 0) {
-          board[r][c] = board[r][c + 1];
-          board[r][c + 1] = 0;
+    for (let i = 0; i < board.length; i++) {
+      for (let j = 0; j < board.length; j++) {
+        if (board[i][j] > 0 && board[i][j] === board[i][j + 1]) {
+          board[i][j] = board[i][j] * 2;
+          board[i][j + 1] = 0;
+          points += board[i][j];
+        } else if (board[i][j] === 0 && board[i][j + 1] > 0) {
+          board[i][j] = board[i][j + 1];
+          board[i][j + 1] = 0;
         }
       }
     }
     
-    return {board};
+    return {board, points};
   }
   
   rotateRight(matrix) {
     let result = [];
 	
-  	for (let c = 0; c < matrix.length; c++) {
+  	for (let j = 0; j < matrix.length; j++) {
 	  	let row = [];
-	  	for (let r = matrix.length - 1; r >= 0; r--) {
-			  row.push(matrix[r][c]);
+	  	for (let i = matrix.length - 1; i >= 0; i--) {
+			  row.push(matrix[i][j]);
 		  }
       result.push(row);
 	  }
@@ -254,10 +256,10 @@ class App extends React.Component {
   rotateLeft(matrix) {
   	let result = [];
 
-    for (let c = matrix.length - 1; c >= 0; c--) {
+    for (let j = matrix.length - 1; j >= 0; j--) {
       let row = [];
-      for (let r = matrix.length - 1; r >= 0; r--) {
-        row.unshift(matrix[r][c]);
+      for (let i = matrix.length - 1; i >= 0; i--) {
+        row.unshift(matrix[i][j]);
       }
       result.push(row);
     }
@@ -309,7 +311,9 @@ class App extends React.Component {
         <table>
           {this.state.board.map((row, i) => (<Row key={i} row={row} />))}
         </table>
-        
+
+        <div className="points" ><div>Очки: {this.state.points}</div></div>
+
         <p>{this.state.message}</p>
       </div>
     );
